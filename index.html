@@ -137,7 +137,7 @@ section + section{border-top:1px solid var(--border);}
 @media (max-width:880px){.about-grid{grid-template-columns:1fr; gap:46px;}}
 
 /* ---------- projects ---------- */
-.project-grid{display:grid; grid-template-columns:repeat(2,1fr); gap:24px;}
+.project-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:24px;}
 .proj-card{
   background:var(--bg-card); border:1px solid var(--border); border-radius:10px;
   padding:32px; transition:border-color 0.2s, box-shadow 0.2s;
@@ -157,7 +157,8 @@ section + section{border-top:1px solid var(--border);}
 }
 .view-link:hover{gap:10px;}
 
-@media (max-width:880px){.project-grid{grid-template-columns:1fr;}}
+@media (max-width:1080px){.project-grid{grid-template-columns:repeat(2,1fr);}}
+@media (max-width:680px){.project-grid{grid-template-columns:1fr;}}
 
 /* ---------- skills ---------- */
 .skills-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:20px;}
@@ -301,6 +302,20 @@ footer{
         <div><div class="m-num">0</div><div class="m-label">Duplicate Entries</div></div>
       </div>
       <a class="view-link" href="https://github.com/animishgupta/FaceTrack" target="_blank" rel="noopener">View Repository →</a>
+    </div>
+
+    <div class="proj-card reveal">
+      <div class="proj-tag">Deployed · Independent Build</div>
+      <h3>VoyageIQ — Travel Discovery & Route Intelligence</h3>
+      <p>An AI-driven travel platform generating personalized destinations and itineraries based on budget, duration, and preferences, with route intelligence for cost-efficient, fastest, and scenic options.</p>
+      <div class="stack">
+        <span>Next.js</span><span>React</span><span>TypeScript</span><span>FastAPI</span><span>Groq API</span>
+      </div>
+      <div class="proj-metrics">
+        <div><div class="m-num">3</div><div class="m-label">Route Modes</div></div>
+        <div><div class="m-num">Live</div><div class="m-label">Weather & Crowd Data</div></div>
+      </div>
+      <a class="view-link" href="https://github.com/animishgupta/VoyageIQ" target="_blank" rel="noopener">View Repository →</a>
     </div>
 
   </div>
