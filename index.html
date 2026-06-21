@@ -3,14 +3,23 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="color-scheme" content="light only">
+<meta name="color-scheme" content="light dark">
 <title>Animish Gupta</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<script>
+(function(){
+  try{
+    var saved = localStorage.getItem('theme');
+    var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    document.documentElement.setAttribute('data-theme', saved || (prefersDark ? 'dark' : 'light'));
+  }catch(e){}
+})();
+</script>
 <style>
 :root{
-  color-scheme: light only;
+  color-scheme: light;
   --bg:#FFFFFF;
   --bg-card:#FFFFFF;
   --border:#E2E2E2;
@@ -18,17 +27,57 @@
   --text-dim:#555555;
   --accent:#1F3A5F;
   --accent-soft:#EEF2F7;
+  --nav-bg:rgba(250,250,248,0.92);
+  --card-glare:rgba(255,255,255,0.55);
+  --shadow-color:rgba(20,30,45,0.16);
+  --shadow-color-soft:rgba(20,30,45,0.12);
+  --scene-grad-top:#FFFFFF;
+  --scene-grad-bottom:#FAFAF8;
+  --eyebrow-bg:rgba(255,255,255,0.75);
+  --sub-bg:rgba(250,250,248,0.55);
+  --btn-glare:rgba(255,255,255,0.45);
+  --btn-ghost-bg:rgba(255,255,255,0.85);
+  --readout-bg:rgba(255,255,255,0.85);
+  --section-bg:rgba(255,255,255,0.94);
+  --btn-primary-bg:#0A0A0A;
+  --btn-primary-text:#FFFFFF;
   --display:'Space Grotesk', sans-serif;
   --body:'Inter', sans-serif;
 }
 
+html[data-theme="dark"]{
+  color-scheme: dark;
+  --bg:#0B0D11;
+  --bg-card:#14171C;
+  --border:#262B33;
+  --text:#F2F3F5;
+  --text-dim:#9AA1AC;
+  --accent:#7FA8D9;
+  --accent-soft:#1B2531;
+  --nav-bg:rgba(11,13,17,0.85);
+  --card-glare:rgba(255,255,255,0.08);
+  --shadow-color:rgba(0,0,0,0.45);
+  --shadow-color-soft:rgba(0,0,0,0.35);
+  --scene-grad-top:#0B0D11;
+  --scene-grad-bottom:#0E1116;
+  --eyebrow-bg:rgba(20,23,28,0.75);
+  --sub-bg:rgba(14,17,22,0.55);
+  --btn-glare:rgba(255,255,255,0.12);
+  --btn-ghost-bg:rgba(20,23,28,0.85);
+  --readout-bg:rgba(20,23,28,0.85);
+  --section-bg:rgba(11,13,17,0.94);
+  --btn-primary-bg:#F2F3F5;
+  --btn-primary-text:#0B0D11;
+}
+
 *{margin:0;padding:0;box-sizing:border-box;}
-html{scroll-behavior:smooth; background:#FFFFFF;}
+html{scroll-behavior:smooth; background:var(--bg); transition:background 0.3s ease;}
 body{
   background:transparent !important;
   color:var(--text) !important;
   font-family:var(--body);
   line-height:1.65;
+  transition:color 0.3s ease;
 }
 
 @media (prefers-reduced-motion: reduce){
@@ -42,19 +91,28 @@ a, button{ touch-action:manipulation; }
 
 .skip-link{
   position:absolute; left:-9999px; top:0; z-index:200;
-  background:var(--text); color:#fff; padding:12px 20px; border-radius:0 0 8px 0;
+  background:var(--btn-primary-bg); color:var(--btn-primary-text); padding:12px 20px; border-radius:0 0 8px 0;
   font-size:14px; font-weight:600;
 }
 .skip-link:focus{left:0;}
+
+/* ---------- scroll progress ---------- */
+.scroll-progress{
+  position:fixed; top:0; left:0; height:2.5px; width:0%;
+  background:linear-gradient(90deg, var(--accent), #C98A3E);
+  z-index:101; transition:width 0.1s linear;
+  pointer-events:none;
+}
 
 /* ---------- nav ---------- */
 nav{
   position:fixed; top:0; left:0; right:0; z-index:100;
   display:flex; align-items:center; justify-content:space-between;
   padding:22px 6vw;
-  background:rgba(250,250,248,0.92);
+  background:var(--nav-bg);
   backdrop-filter:blur(8px);
   border-bottom:1px solid var(--border);
+  transition:background 0.3s ease, border-color 0.3s ease;
 }
 .logo{
   font-family:var(--display); font-size:18px; font-weight:600;
@@ -62,18 +120,49 @@ nav{
 }
 .nav-links{display:flex; gap:8px; font-size:14px;}
 .nav-links a{
-  color:var(--text-dim); transition:color 0.2s;
+  position:relative;
+  color:var(--text-dim); transition:color 0.25s ease;
   padding:12px 14px; min-height:44px; display:flex; align-items:center;
 }
+.nav-links a::after{
+  content:""; position:absolute; left:14px; right:14px; bottom:6px;
+  height:1.5px; background:var(--accent); border-radius:2px;
+  transform:scaleX(0); transform-origin:left;
+  transition:transform 0.3s cubic-bezier(.4,0,.2,1);
+}
 .nav-links a:hover{color:var(--text);}
+.nav-links a:hover::after{transform:scaleX(1);}
+.nav-links a.active{color:var(--text);}
+.nav-links a.active::after{transform:scaleX(1);}
 .nav-toggle{display:none; flex-direction:column; gap:5px; cursor:pointer; background:none; border:none; padding:6px;}
 .nav-toggle span{width:22px; height:2px; background:var(--text);}
+
+.nav-right{display:flex; align-items:center; gap:6px;}
+
+.theme-toggle{
+  position:relative;
+  width:44px; height:44px;
+  display:flex; align-items:center; justify-content:center;
+  background:none; border:1px solid var(--border); border-radius:8px;
+  color:var(--text);
+  transition:border-color 0.2s ease, background 0.2s ease;
+}
+.theme-toggle:hover{border-color:var(--accent);}
+.theme-toggle svg{
+  width:18px; height:18px;
+  position:absolute;
+  transition:opacity 0.25s ease, transform 0.35s ease;
+}
+.theme-toggle .icon-sun{opacity:0; transform:scale(0.5) rotate(-90deg);}
+.theme-toggle .icon-moon{opacity:1; transform:scale(1) rotate(0deg);}
+html[data-theme="dark"] .theme-toggle .icon-sun{opacity:1; transform:scale(1) rotate(0deg);}
+html[data-theme="dark"] .theme-toggle .icon-moon{opacity:0; transform:scale(0.5) rotate(90deg);}
 
 @media (max-width:780px){
   .nav-links{
     position:fixed; top:65px; right:0; height:calc(100vh - 65px); width:230px;
     background:var(--bg-card); flex-direction:column; padding:32px 28px; gap:24px;
-    transform:translateX(100%); transition:transform 0.3s ease;
+    transform:translateX(100%); transition:transform 0.3s ease, background 0.3s ease;
     border-left:1px solid var(--border);
   }
   .nav-links.open{transform:translateX(0);}
@@ -87,7 +176,7 @@ nav{
 }
 .scene-bg-fixed{
   position:fixed; inset:0; z-index:0; pointer-events:none;
-  background:linear-gradient(180deg, #FFFFFF 0%, #FAFAF8 100%);
+  background:linear-gradient(180deg, var(--scene-grad-top) 0%, var(--scene-grad-bottom) 100%);
 }
 .scene-bg-fixed canvas{display:block; width:100%; height:100%;}
 .scene-fallback{
@@ -96,6 +185,15 @@ nav{
 }
 .hero-content{
   position:relative; z-index:2; max-width:760px;
+}
+
+.load-in{
+  opacity:0; transform:translateY(16px);
+  animation:loadIn 0.7s cubic-bezier(.16,1,.3,1) forwards;
+  animation-delay:calc(var(--d, 0) * 0.09s + 0.05s);
+}
+@keyframes loadIn{
+  to{ opacity:1; transform:translateY(0); }
 }
 
 nav{ position:fixed; z-index:100; }
@@ -107,7 +205,7 @@ nav{ position:fixed; z-index:100; }
 .eyebrow{
   font-size:14px; color:var(--accent); font-weight:600;
   letter-spacing:0.5px; margin-bottom:22px;
-  background:rgba(255,255,255,0.75); backdrop-filter:blur(4px);
+  background:var(--eyebrow-bg); backdrop-filter:blur(4px);
   display:inline-block; padding:6px 14px; border-radius:20px; border:1px solid var(--border);
 }
 .hero h1{
@@ -117,7 +215,7 @@ nav{ position:fixed; z-index:100; }
 }
 .hero p.sub{
   margin-top:26px; font-size:clamp(1rem, 1.5vw, 1.15rem); color:var(--text-dim);
-  max-width:600px; background:rgba(250,250,248,0.55); backdrop-filter:blur(2px);
+  max-width:600px; background:var(--sub-bg); backdrop-filter:blur(2px);
   border-radius:8px;
 }
 .hero-actions{display:flex; gap:16px; margin-top:38px; flex-wrap:wrap;}
@@ -126,19 +224,19 @@ nav{ position:fixed; z-index:100; }
   font-size:14.5px; font-weight:600;
   padding:14px 26px; border-radius:6px; border:1px solid var(--border);
   display:inline-flex; align-items:center; gap:8px;
-  transition:background 0.2s ease, border-color 0.2s ease; cursor:pointer;
+  transition:background 0.25s cubic-bezier(.4,0,.2,1), border-color 0.25s cubic-bezier(.4,0,.2,1), transform 0.25s cubic-bezier(.4,0,.2,1); cursor:pointer;
 }
 .btn::after{
   content:""; position:absolute; inset:0; border-radius:inherit; pointer-events:none;
-  background:radial-gradient(circle at var(--mx,50%) var(--my,50%), rgba(255,255,255,0.45), transparent 60%);
+  background:radial-gradient(circle at var(--mx,50%) var(--my,50%), var(--btn-glare), transparent 60%);
   opacity:0; transition:opacity 0.3s ease; mix-blend-mode:overlay;
 }
 .btn:hover::after{opacity:1;}
 .btn:active{transform:translateY(-2px) perspective(700px) rotateX(var(--tx,0deg)) rotateY(var(--ty,0deg)) scale(0.96) !important; transition:transform 0.08s ease;}
-.btn-primary{background:var(--text); color:#fff; border-color:var(--text);}
-.btn-primary:hover{background:var(--accent); border-color:var(--accent); transform:translateY(-2px) perspective(700px) rotateX(var(--tx,0deg)) rotateY(var(--ty,0deg));}
+.btn-primary{background:var(--btn-primary-bg); color:var(--btn-primary-text); border-color:var(--btn-primary-bg); transition:background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;}
+.btn-primary:hover{background:var(--accent); border-color:var(--accent); color:#fff; transform:translateY(-2px) perspective(700px) rotateX(var(--tx,0deg)) rotateY(var(--ty,0deg));}
 .btn-ghost{
-  color:var(--text); background:rgba(255,255,255,0.85); backdrop-filter:blur(4px);
+  color:var(--text); background:var(--btn-ghost-bg); backdrop-filter:blur(4px);
 }
 .btn-ghost:hover{border-color:var(--text); transform:translateY(-2px) perspective(700px) rotateX(var(--tx,0deg)) rotateY(var(--ty,0deg));}
 
@@ -147,17 +245,18 @@ nav{ position:fixed; z-index:100; }
   border:1px solid var(--border); border-radius:8px; overflow:hidden;
   max-width:740px; background:var(--border);
 }
-.readout div{background:rgba(255,255,255,0.85); backdrop-filter:blur(6px); padding:20px 22px;}
+.readout div{background:var(--readout-bg); backdrop-filter:blur(6px); padding:20px 22px;}
 .readout .num{font-family:var(--display); font-size:1.6rem; font-weight:700; color:var(--text);}
 .readout .label{font-size:11.5px; color:var(--text-dim); margin-top:4px; text-transform:uppercase; letter-spacing:0.5px;}
 
 @media (max-width:680px){.readout{grid-template-columns:repeat(2,1fr);}}
 
 /* ---------- section shared ---------- */
-section{padding:110px 6vw; position:relative; z-index:1;}
+section{padding:110px 6vw; position:relative; z-index:1; scroll-margin-top:84px;}
 section:not(.hero){
-  background:rgba(255,255,255,0.94);
+  background:var(--section-bg);
   backdrop-filter:blur(2px);
+  transition:background 0.3s ease;
 }
 section + section{border-top:1px solid var(--border);}
 .section-head{margin-bottom:54px; max-width:740px;}
@@ -188,7 +287,7 @@ section + section{border-top:1px solid var(--border);}
 .project-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:24px;}
 .proj-card{
   background:var(--bg-card); border:1px solid var(--border); border-radius:10px;
-  padding:32px; transition:border-color 0.2s, box-shadow 0.2s;
+  padding:32px; transition:border-color 0.3s cubic-bezier(.4,0,.2,1), box-shadow 0.3s cubic-bezier(.4,0,.2,1), background 0.3s ease, transform 0.3s cubic-bezier(.4,0,.2,1);
 }
 .proj-card:hover{border-color:#C9CDD6; box-shadow:0 4px 18px rgba(0,0,0,0.04);}
 .proj-tag{font-size:12px; color:var(--text-dim); letter-spacing:0.5px; margin-bottom:16px; text-transform:uppercase;}
@@ -201,9 +300,11 @@ section + section{border-top:1px solid var(--border);}
 .proj-metrics .m-label{font-size:11px; color:var(--text-dim); text-transform:uppercase; margin-top:2px; letter-spacing:0.3px;}
 .view-link{
   font-size:13.5px; font-weight:600; color:var(--accent); display:inline-flex; align-items:center; gap:6px;
-  border-bottom:1px solid var(--accent); padding:11px 2px; min-height:44px; transition:gap 0.2s;
+  border-bottom:1px solid var(--accent); padding:11px 2px; min-height:44px;
+  transition:gap 0.3s cubic-bezier(.4,0,.2,1), opacity 0.2s ease;
 }
-.view-link:hover{gap:10px;}
+.view-link:hover{gap:11px; opacity:0.82;}
+.view-link:active{opacity:0.6;}
 
 @media (max-width:1080px){.project-grid{grid-template-columns:repeat(2,1fr);}}
 @media (max-width:680px){.project-grid{grid-template-columns:1fr;}}
@@ -241,14 +342,19 @@ section + section{border-top:1px solid var(--border);}
 
 footer{
   position:relative; z-index:1;
-  background:rgba(255,255,255,0.94); backdrop-filter:blur(2px);
+  background:var(--section-bg); backdrop-filter:blur(2px);
   border-top:1px solid var(--border); padding:26px 6vw;
   display:flex; justify-content:space-between; font-size:12.5px; color:var(--text-dim);
   flex-wrap:wrap; gap:12px;
+  transition:background 0.3s ease, border-color 0.3s ease;
 }
 
-.reveal{opacity:0; transform:translateY(20px); transition:opacity 0.6s ease, transform 0.6s ease;}
-.reveal.in{opacity:1; transform:translateY(0);}
+.reveal{
+  opacity:0; transform:translateY(24px) scale(0.985);
+  transition:opacity 0.7s cubic-bezier(.16,1,.3,1), transform 0.7s cubic-bezier(.16,1,.3,1);
+  transition-delay:calc(var(--ri, 0) * 70ms);
+}
+.reveal.in{opacity:1; transform:translateY(0) scale(1);}
 
 /* ---------- 3D tilt + interactive depth ---------- */
 .project-grid, .skills-grid, .split-section, .readout{
@@ -263,17 +369,17 @@ footer{
 }
 .proj-card::after, .skill-card::after, .list-card::after, .readout > div::after{
   content:""; position:absolute; inset:0; border-radius:inherit; pointer-events:none;
-  background:radial-gradient(circle at var(--mx,50%) var(--my,50%), rgba(255,255,255,0.55), transparent 58%);
+  background:radial-gradient(circle at var(--mx,50%) var(--my,50%), var(--card-glare), transparent 58%);
   opacity:0; transition:opacity 0.35s ease; mix-blend-mode:overlay;
 }
 .proj-card:hover::after, .skill-card:hover::after, .list-card:hover::after, .readout > div:hover::after{
   opacity:1;
 }
 .proj-card:hover, .list-card:hover{
-  box-shadow:var(--sx,0px) var(--sy,0px) 36px rgba(20,30,45,0.16);
+  box-shadow:var(--sx,0px) var(--sy,0px) 36px var(--shadow-color);
 }
 .skill-card:hover, .readout > div:hover{
-  box-shadow:var(--sx,0px) var(--sy,0px) 28px rgba(20,30,45,0.12);
+  box-shadow:var(--sx,0px) var(--sy,0px) 28px var(--shadow-color-soft);
 }
 .proj-card h3, .list-card h3{ transform:translateZ(24px); transition:transform 0.12s ease-out; }
 .proj-card .m-num{ transform:translateZ(14px); transition:transform 0.12s ease-out; }
@@ -290,17 +396,25 @@ footer{
 <body>
 <a href="#main" class="skip-link">Skip to main content</a>
 
+<div class="scroll-progress" id="scrollProgress" aria-hidden="true"></div>
+
 <nav>
   <div class="logo">Animish Gupta</div>
-  <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation">
-    <span></span><span></span><span></span>
-  </button>
+  <div class="nav-right">
+    <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode" title="Toggle dark mode">
+      <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"></path></svg>
+      <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+    </button>
+    <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
   <div class="nav-links" id="navLinks">
-    <a href="#about">About</a>
-    <a href="#projects">Projects</a>
-    <a href="#skills">Skills</a>
-    <a href="#credentials">Credentials</a>
-    <a href="#contact">Contact</a>
+    <a href="#about" data-section="about">About</a>
+    <a href="#projects" data-section="projects">Projects</a>
+    <a href="#skills" data-section="skills">Skills</a>
+    <a href="#credentials" data-section="credentials">Credentials</a>
+    <a href="#contact" data-section="contact">Contact</a>
   </div>
 </nav>
 
@@ -313,19 +427,19 @@ footer{
 <!-- HERO -->
 <section class="hero" id="main">
   <div class="hero-content">
-    <div class="eyebrow">AI & Data Analytics Engineer</div>
-    <h1>I build systems that<br>detect what isn't real.</h1>
-    <p class="sub">B.Tech Computer Science undergraduate at GLA University, working on applied AI — from deepfake forensics to real-time face verification. AI/GenAI intern at IIT Jammu.</p>
-    <div class="hero-actions">
+    <div class="eyebrow load-in" style="--d:0">AI & Data Analytics Engineer</div>
+    <h1 class="load-in" style="--d:1">I build systems that<br>detect what isn't real.</h1>
+    <p class="sub load-in" style="--d:2">B.Tech Computer Science undergraduate at GLA University, working on applied AI — from deepfake forensics to real-time face verification. AI/GenAI intern at IIT Jammu.</p>
+    <div class="hero-actions load-in" style="--d:3">
       <a href="#projects" class="btn btn-primary">View Projects →</a>
       <a href="Animish_Gupta_Resume.pdf" class="btn btn-ghost" download>↓ Download Résumé</a>
     </div>
 
-    <div class="readout reveal">
-      <div><div class="num">300+</div><div class="label">Files Analyzed</div></div>
-      <div><div class="num">100+</div><div class="label">Records Verified</div></div>
-      <div><div class="num">9</div><div class="label">Certifications</div></div>
-      <div><div class="num">3</div><div class="label">Hackathons</div></div>
+    <div class="readout load-in" style="--d:4">
+      <div><div class="num" data-count="300" data-suffix="+">0</div><div class="label">Files Analyzed</div></div>
+      <div><div class="num" data-count="100" data-suffix="+">0</div><div class="label">Records Verified</div></div>
+      <div><div class="num" data-count="11">0</div><div class="label">Certifications</div></div>
+      <div><div class="num" data-count="3">0</div><div class="label">Hackathons</div></div>
     </div>
   </div>
 </section>
@@ -460,14 +574,18 @@ footer{
 
     <div class="list-card reveal">
       <h3>Certifications</h3>
-      <div class="lc-sub">AWS · IBM · Cisco · HP · Deloitte · TCS iON</div>
+      <div class="lc-sub">AWS · IBM · Cisco · HP · Deloitte · TCS iON · Simplilearn</div>
       <div class="list-row"><span class="lr-name">Foundations of Prompt Engineering — AWS</span><span class="lr-date">JUN 2026</span></div>
       <div class="list-row"><span class="lr-name">AI Fundamentals — IBM SkillsBuild</span><span class="lr-date">JUN 2026</span></div>
       <div class="list-row"><span class="lr-name">Data Science & Analytics — HP LIFE</span><span class="lr-date">JUN 2026</span></div>
       <div class="list-row"><span class="lr-name">Intro to Data Science — Cisco</span><span class="lr-date">JUN 2026</span></div>
       <div class="list-row"><span class="lr-name">Data Analytics Job Simulation — Deloitte</span><span class="lr-date">JUN 2026</span></div>
       <div class="list-row"><span class="lr-name">Market Risk & Wealth Mgmt. — TCS iON</span><span class="lr-date">APR 2026</span></div>
-      <div class="list-row"><span class="lr-name">Tableau, Power BI, Excel, SQL — Simplilearn / IBM</span><span class="lr-date">MAR 2026</span></div>
+      <div class="list-row"><span class="lr-name">Basics of Wealth Management — TCS iON</span><span class="lr-date">APR 2026</span></div>
+      <div class="list-row"><span class="lr-name">Introduction to MS Excel — Simplilearn</span><span class="lr-date">MAR 2026</span></div>
+      <div class="list-row"><span class="lr-name">Power BI for Beginners — Simplilearn</span><span class="lr-date">MAR 2026</span></div>
+      <div class="list-row"><span class="lr-name">Introduction to Tableau — Simplilearn</span><span class="lr-date">MAR 2026</span></div>
+      <div class="list-row"><span class="lr-name">SQL and Relational Databases 101 — IBM</span><span class="lr-date">MAR 2026</span></div>
       <a class="view-link" href="https://drive.google.com/drive/folders/1InNDHsLpr1dxQoa8fizh8HL5GTgh7SVg" target="_blank" rel="noopener" aria-label="View All Certificates (opens in new tab)">View All Certificates →</a>
     </div>
 
@@ -506,10 +624,33 @@ footer{
 </footer>
 
 <script>
+const themeToggle = document.getElementById('themeToggle');
+const htmlEl = document.documentElement;
+themeToggle.setAttribute('aria-pressed', htmlEl.getAttribute('data-theme') === 'dark');
+
+themeToggle.addEventListener('click', () => {
+  const next = htmlEl.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+  htmlEl.setAttribute('data-theme', next);
+  try{ localStorage.setItem('theme', next); }catch(e){}
+  themeToggle.setAttribute('aria-pressed', next === 'dark');
+  window.dispatchEvent(new CustomEvent('themechange', { detail: { theme: next } }));
+});
+</script>
+
+<script>
 const navToggle = document.getElementById('navToggle');
 const navLinks = document.getElementById('navLinks');
 navToggle.addEventListener('click', () => navLinks.classList.toggle('open'));
 navLinks.querySelectorAll('a').forEach(a => a.addEventListener('click', () => navLinks.classList.remove('open')));
+
+// ---------- staggered reveal ----------
+// Assign a per-group stagger index so cards in the same row/grid cascade in,
+// rather than every .reveal element fading in at the exact same moment.
+document.querySelectorAll('.project-grid, .skills-grid, .split-section').forEach(group => {
+  Array.from(group.children).forEach((child, i) => {
+    if(child.classList.contains('reveal')) child.style.setProperty('--ri', i);
+  });
+});
 
 const revealEls = document.querySelectorAll('.reveal');
 const io = new IntersectionObserver((entries) => {
@@ -521,6 +662,64 @@ const io = new IntersectionObserver((entries) => {
   });
 }, { threshold: 0.15 });
 revealEls.forEach(el => io.observe(el));
+
+// ---------- animated stat counters ----------
+// Counts up from 0 to the target once the readout scrolls into view.
+function animateCount(el){
+  const target = parseInt(el.dataset.count, 10);
+  const suffix = el.dataset.suffix || '';
+  const duration = 1100;
+  const start = performance.now();
+  function tick(now){
+    const p = Math.min((now - start) / duration, 1);
+    const eased = 1 - Math.pow(1 - p, 3); // ease-out cubic
+    el.textContent = Math.round(target * eased) + (p >= 1 ? suffix : '');
+    if(p < 1) requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+}
+const reduceMotionCounters = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const countEls = document.querySelectorAll('[data-count]');
+if(reduceMotionCounters){
+  countEls.forEach(el => { el.textContent = el.dataset.count + (el.dataset.suffix || ''); });
+} else {
+  const countIo = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if(entry.isIntersecting){
+        animateCount(entry.target);
+        countIo.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.4 });
+  countEls.forEach(el => countIo.observe(el));
+}
+
+// ---------- scroll progress bar ----------
+const scrollProgressEl = document.getElementById('scrollProgress');
+function updateScrollProgress(){
+  const doc = document.documentElement;
+  const max = doc.scrollHeight - doc.clientHeight;
+  const pct = max > 0 ? (window.scrollY / max) * 100 : 0;
+  scrollProgressEl.style.width = pct + '%';
+}
+window.addEventListener('scroll', updateScrollProgress, { passive:true });
+window.addEventListener('resize', updateScrollProgress, { passive:true });
+updateScrollProgress();
+
+// ---------- scroll-spy active nav link ----------
+const sections = ['about','projects','skills','credentials','contact']
+  .map(id => document.getElementById(id))
+  .filter(Boolean);
+const navAnchors = document.querySelectorAll('.nav-links a[data-section]');
+const spyIo = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if(entry.isIntersecting){
+      const id = entry.target.id;
+      navAnchors.forEach(a => a.classList.toggle('active', a.dataset.section === id));
+    }
+  });
+}, { rootMargin: '-40% 0px -50% 0px', threshold: 0 });
+sections.forEach(s => spyIo.observe(s));
 </script>
 
 <script>
@@ -610,7 +809,15 @@ async function initScene(){
   renderer.setSize(width, height);
 
   const scene = new THREE.Scene();
-  scene.fog = new THREE.Fog(0xFAFAF8, 8, 26);
+  function currentSceneBg(){
+    return document.documentElement.getAttribute('data-theme') === 'dark' ? 0x0B0D11 : 0xFAFAF8;
+  }
+  scene.fog = new THREE.Fog(currentSceneBg(), 8, 26);
+
+  window.addEventListener('themechange', () => {
+    scene.fog.color.set(currentSceneBg());
+  });
+
   const camera = new THREE.PerspectiveCamera(55, width/height, 0.1, 100);
   camera.position.set(0, 0, 12);
 
