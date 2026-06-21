@@ -391,6 +391,70 @@ footer{
   .proj-card h3, .list-card h3, .proj-card .m-num, .skill-card .s-tag, .readout .num{ transform:none !important; }
   .proj-card::after, .skill-card::after, .list-card::after, .readout > div::after{ display:none; }
 }
+
+/* ---------- clickable-card affordance ---------- */
+.proj-card{cursor:pointer;}
+.list-row{cursor:pointer; border-radius:6px; transition:background 0.2s ease;}
+.list-row:hover{background:var(--accent-soft);}
+.list-row:focus-visible{outline:2px solid var(--accent); outline-offset:2px;}
+
+/* ---------- detail modal ---------- */
+.modal-overlay{
+  position:fixed; inset:0; z-index:300;
+  background:rgba(0,0,0,0.5);
+  display:flex; align-items:flex-end; justify-content:center;
+  opacity:0; visibility:hidden;
+  transition:opacity 0.25s ease, visibility 0.25s ease;
+  padding:0;
+}
+@media (min-width:680px){
+  .modal-overlay{align-items:center; padding:24px;}
+}
+.modal-overlay.open{opacity:1; visibility:visible;}
+.modal-card{
+  position:relative;
+  background:var(--bg-card); color:var(--text);
+  width:100%; max-width:560px;
+  max-height:88vh; overflow-y:auto;
+  border-radius:18px 18px 0 0;
+  border:1px solid var(--border);
+  padding:36px 30px 32px;
+  transform:translateY(24px) scale(0.98);
+  opacity:0;
+  transition:transform 0.3s cubic-bezier(.16,1,.3,1), opacity 0.3s cubic-bezier(.16,1,.3,1);
+}
+@media (min-width:680px){
+  .modal-card{border-radius:16px; padding:40px;}
+}
+.modal-overlay.open .modal-card{transform:translateY(0) scale(1); opacity:1;}
+.modal-close{
+  position:absolute; top:18px; right:18px;
+  width:36px; height:36px; border-radius:8px;
+  display:flex; align-items:center; justify-content:center;
+  background:none; border:1px solid var(--border); color:var(--text-dim);
+  transition:border-color 0.2s ease, color 0.2s ease;
+}
+.modal-close:hover{border-color:var(--accent); color:var(--text);}
+.modal-close svg{width:16px; height:16px;}
+.modal-tag{font-size:12px; color:var(--accent); font-weight:600; letter-spacing:0.5px; text-transform:uppercase; margin-bottom:10px; padding-right:40px;}
+.modal-title{font-family:var(--display); font-size:1.5rem; font-weight:600; margin-bottom:16px; padding-right:36px; line-height:1.25;}
+.modal-body{color:var(--text-dim); font-size:0.98rem; line-height:1.7; white-space:pre-line;}
+.modal-stack{display:flex; flex-wrap:wrap; gap:8px; margin-top:20px;}
+.modal-stack span{font-size:11.5px; color:var(--text-dim); border:1px solid var(--border); padding:5px 11px; border-radius:5px;}
+.modal-stack:empty{display:none;}
+.modal-actions{display:flex; gap:12px; margin-top:26px; flex-wrap:wrap;}
+.modal-actions:empty{display:none;}
+.modal-actions a{
+  font-size:13.5px; font-weight:600; padding:11px 20px; border-radius:6px;
+  border:1px solid var(--border); display:inline-flex; align-items:center; gap:6px;
+  transition:border-color 0.2s ease, background 0.2s ease, color 0.2s ease;
+}
+.modal-actions a.primary{background:var(--btn-primary-bg); color:var(--btn-primary-text); border-color:var(--btn-primary-bg);}
+.modal-actions a.primary:hover{background:var(--accent); border-color:var(--accent); color:#fff;}
+.modal-actions a.ghost{color:var(--text); background:none;}
+.modal-actions a.ghost:hover{border-color:var(--text);}
+
+body.modal-locked{overflow:hidden;}
 </style>
 </head>
 <body>
@@ -485,7 +549,7 @@ footer{
   </div>
   <div class="project-grid">
 
-    <div class="proj-card reveal">
+    <div class="proj-card reveal" data-detail="sachai">
       <div class="proj-tag">Deployed · Hackathon Build</div>
       <h3>SachAI — Media Forensics Platform</h3>
       <p>An AI-powered platform that detects deepfakes and AI-generated content in images and video, producing automated integrity scores, anomaly timestamps, and forensic reports. Built at CodePunk V2.0 Hackathon, GLA University.</p>
@@ -499,7 +563,7 @@ footer{
       <a class="view-link" href="https://github.com/animishgupta/Sach-AI" target="_blank" rel="noopener" aria-label="View Repository (opens in new tab)">View Repository →</a>
     </div>
 
-    <div class="proj-card reveal">
+    <div class="proj-card reveal" data-detail="facetrack">
       <div class="proj-tag">Deployed · Independent Build</div>
       <h3>FaceTrack — Smart Face Attendance System</h3>
       <p>A real-time multi-face detection and attendance system with duplicate-prevention logic, built on FaceNet and OpenCV with a Flask-SQLite backend and RESTful API layer.</p>
@@ -513,7 +577,7 @@ footer{
       <a class="view-link" href="https://github.com/animishgupta/FaceTrack" target="_blank" rel="noopener" aria-label="View Repository (opens in new tab)">View Repository →</a>
     </div>
 
-    <div class="proj-card reveal">
+    <div class="proj-card reveal" data-detail="voyageiq">
       <div class="proj-tag">Deployed · Independent Build</div>
       <h3>VoyageIQ — Travel Discovery & Route Intelligence</h3>
       <p>An AI-driven travel platform generating personalized destinations and itineraries based on budget, duration, and preferences, with route intelligence for cost-efficient, fastest, and scenic options.</p>
@@ -575,27 +639,27 @@ footer{
     <div class="list-card reveal">
       <h3>Certifications</h3>
       <div class="lc-sub">AWS · IBM · Cisco · HP · Deloitte · TCS iON · Simplilearn</div>
-      <div class="list-row"><span class="lr-name">Foundations of Prompt Engineering — AWS</span><span class="lr-date">JUN 2026</span></div>
-      <div class="list-row"><span class="lr-name">AI Fundamentals — IBM SkillsBuild</span><span class="lr-date">JUN 2026</span></div>
-      <div class="list-row"><span class="lr-name">Data Science & Analytics — HP LIFE</span><span class="lr-date">JUN 2026</span></div>
-      <div class="list-row"><span class="lr-name">Intro to Data Science — Cisco</span><span class="lr-date">JUN 2026</span></div>
-      <div class="list-row"><span class="lr-name">Data Analytics Job Simulation — Deloitte</span><span class="lr-date">JUN 2026</span></div>
-      <div class="list-row"><span class="lr-name">Market Risk & Wealth Mgmt. — TCS iON</span><span class="lr-date">APR 2026</span></div>
-      <div class="list-row"><span class="lr-name">Basics of Wealth Management — TCS iON</span><span class="lr-date">APR 2026</span></div>
-      <div class="list-row"><span class="lr-name">Introduction to MS Excel — Simplilearn</span><span class="lr-date">MAR 2026</span></div>
-      <div class="list-row"><span class="lr-name">Power BI for Beginners — Simplilearn</span><span class="lr-date">MAR 2026</span></div>
-      <div class="list-row"><span class="lr-name">Introduction to Tableau — Simplilearn</span><span class="lr-date">MAR 2026</span></div>
-      <div class="list-row"><span class="lr-name">SQL and Relational Databases 101 — IBM</span><span class="lr-date">MAR 2026</span></div>
+      <div class="list-row" data-detail="cert-aws" data-pdf="certs/aws-prompt-engineering.pdf" tabindex="0" role="button" aria-haspopup="dialog"><span class="lr-name">Foundations of Prompt Engineering — AWS</span><span class="lr-date">JUN 2026</span></div>
+      <div class="list-row" data-detail="cert-ibm-ai" data-pdf="certs/ibm-ai-fundamentals.pdf" tabindex="0" role="button" aria-haspopup="dialog"><span class="lr-name">AI Fundamentals — IBM SkillsBuild</span><span class="lr-date">JUN 2026</span></div>
+      <div class="list-row" data-detail="cert-hp" data-pdf="certs/hp-data-science-analytics.pdf" tabindex="0" role="button" aria-haspopup="dialog"><span class="lr-name">Data Science & Analytics — HP LIFE</span><span class="lr-date">JUN 2026</span></div>
+      <div class="list-row" data-detail="cert-cisco" data-pdf="certs/cisco-data-science.pdf" tabindex="0" role="button" aria-haspopup="dialog"><span class="lr-name">Intro to Data Science — Cisco</span><span class="lr-date">JUN 2026</span></div>
+      <div class="list-row" data-detail="cert-deloitte" data-pdf="certs/deloitte-data-analytics.pdf" tabindex="0" role="button" aria-haspopup="dialog"><span class="lr-name">Data Analytics Job Simulation — Deloitte</span><span class="lr-date">JUN 2026</span></div>
+      <div class="list-row" data-detail="cert-tcs-market" data-pdf="certs/tcs-ion-market-risk.pdf" tabindex="0" role="button" aria-haspopup="dialog"><span class="lr-name">Market Risk & Wealth Mgmt. — TCS iON</span><span class="lr-date">APR 2026</span></div>
+      <div class="list-row" data-detail="cert-tcs-wealth" data-pdf="certs/tcs-ion-basic-wealth.pdf" tabindex="0" role="button" aria-haspopup="dialog"><span class="lr-name">Basics of Wealth Management — TCS iON</span><span class="lr-date">APR 2026</span></div>
+      <div class="list-row" data-detail="cert-excel" data-pdf="certs/ms-excel.pdf" tabindex="0" role="button" aria-haspopup="dialog"><span class="lr-name">Introduction to MS Excel — Simplilearn</span><span class="lr-date">MAR 2026</span></div>
+      <div class="list-row" data-detail="cert-powerbi" data-pdf="certs/power-bi.pdf" tabindex="0" role="button" aria-haspopup="dialog"><span class="lr-name">Power BI for Beginners — Simplilearn</span><span class="lr-date">MAR 2026</span></div>
+      <div class="list-row" data-detail="cert-tableau" data-pdf="certs/tableau.pdf" tabindex="0" role="button" aria-haspopup="dialog"><span class="lr-name">Introduction to Tableau — Simplilearn</span><span class="lr-date">MAR 2026</span></div>
+      <div class="list-row" data-detail="cert-sql" data-pdf="certs/sql-relational-databases.pdf" tabindex="0" role="button" aria-haspopup="dialog"><span class="lr-name">SQL and Relational Databases 101 — IBM</span><span class="lr-date">MAR 2026</span></div>
       <a class="view-link" href="https://drive.google.com/drive/folders/1InNDHsLpr1dxQoa8fizh8HL5GTgh7SVg" target="_blank" rel="noopener" aria-label="View All Certificates (opens in new tab)">View All Certificates →</a>
     </div>
 
     <div class="list-card reveal">
       <h3>Achievements & Events</h3>
       <div class="lc-sub">National hackathons & competitions</div>
-      <div class="list-row"><span class="lr-name">Devcation Delhi 2026 — GDG Campus IGDTUW × IIT Delhi</span><span class="lr-date">SELECTED</span></div>
-      <div class="list-row"><span class="lr-name">Hack & Break — IIT Bombay Cybersecurity Challenge</span><span class="lr-date">COMPETED</span></div>
-      <div class="list-row"><span class="lr-name">CodePunk V2.0 — GLA University (Built SachAI)</span><span class="lr-date">BUILT</span></div>
-      <div class="list-row"><span class="lr-name">SRIJAN Cultural Fest — GLA University</span><span class="lr-date">SEP 2024</span></div>
+      <div class="list-row" data-detail="ach-devcation" data-pdf="certs/achievement-devcation.pdf" tabindex="0" role="button" aria-haspopup="dialog"><span class="lr-name">Devcation Delhi 2026 — GDG Campus IGDTUW × IIT Delhi</span><span class="lr-date">SELECTED</span></div>
+      <div class="list-row" data-detail="ach-hackbreak" tabindex="0" role="button" aria-haspopup="dialog"><span class="lr-name">Hack & Break — IIT Bombay Cybersecurity Challenge</span><span class="lr-date">COMPETED</span></div>
+      <div class="list-row" data-detail="ach-codepunk" data-pdf="certs/achievement-codepunk.pdf" tabindex="0" role="button" aria-haspopup="dialog"><span class="lr-name">CodePunk V2.0 — GLA University (Built SachAI)</span><span class="lr-date">BUILT</span></div>
+      <div class="list-row" data-detail="ach-srijan" tabindex="0" role="button" aria-haspopup="dialog"><span class="lr-name">SRIJAN Cultural Fest — GLA University</span><span class="lr-date">SEP 2024</span></div>
       <a class="view-link" href="https://drive.google.com/drive/folders/103yXkMx7S-2ikNTruAnjqxde2Uyx4uHJ" target="_blank" rel="noopener" aria-label="View All Achievements (opens in new tab)">View All Achievements →</a>
     </div>
 
@@ -622,6 +686,20 @@ footer{
   <span>© 2026 Animish Gupta</span>
   <span>Lucknow, Uttar Pradesh — IN</span>
 </footer>
+
+<!-- DETAIL MODAL — shared by projects, certifications, and achievements -->
+<div class="modal-overlay" id="modalOverlay" aria-hidden="true">
+  <div class="modal-card" id="modalCard" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <button class="modal-close" id="modalClose" aria-label="Close">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"></path></svg>
+    </button>
+    <div class="modal-tag" id="modalTag"></div>
+    <h3 class="modal-title" id="modalTitle"></h3>
+    <p class="modal-body" id="modalBody"></p>
+    <div class="modal-stack" id="modalStack"></div>
+    <div class="modal-actions" id="modalActions"></div>
+  </div>
+</div>
 
 <script>
 const themeToggle = document.getElementById('themeToggle');
@@ -720,6 +798,198 @@ const spyIo = new IntersectionObserver((entries) => {
   });
 }, { rootMargin: '-40% 0px -50% 0px', threshold: 0 });
 sections.forEach(s => spyIo.observe(s));
+</script>
+
+<script>
+// ---------- detail modal: projects, certifications, achievements ----------
+const DETAILS = {
+  sachai: {
+    tag: 'Project · Hackathon Build',
+    title: 'SachAI — Media Forensics Platform',
+    body: "SachAI flags deepfakes and AI-generated media before they spread. Upload an image or video and it runs forensic checks — frame-level artifact detection, metadata inspection, and OSINT cross-referencing — then returns an integrity score with timestamped anomalies so you can see exactly where the manipulation happened.\n\nBuilt solo in 24 hours at CodePunk V2.0, GLA University. The detection pipeline calls Gemini 1.5 Pro for multimodal analysis, with a React/TypeScript frontend that renders the forensic report and an automated takedown-request workflow for confirmed fakes.",
+    stack: ['React', 'TypeScript', 'Tailwind CSS', 'Gemini 1.5 Pro API', 'OSINT'],
+    links: [{ label: 'View Repository', href: 'https://github.com/animishgupta/Sach-AI', primary: true }]
+  },
+  facetrack: {
+    tag: 'Project · Independent Build',
+    title: 'FaceTrack — Smart Face Attendance System',
+    body: "FaceTrack replaces manual roll-call with real-time face recognition. It detects multiple faces in a single frame, matches them against a stored student database, and logs attendance automatically — with duplicate-prevention logic so the same person can't be marked twice in one session.\n\nThe recognition layer runs on FaceNet embeddings with OpenCV for face detection, backed by a Flask API and SQLite database. Tested against 100+ student records with zero duplicate entries in production use.",
+    stack: ['Python', 'Flask', 'FaceNet', 'OpenCV', 'SQLite'],
+    links: [{ label: 'View Repository', href: 'https://github.com/animishgupta/FaceTrack', primary: true }]
+  },
+  voyageiq: {
+    tag: 'Project · Independent Build',
+    title: 'VoyageIQ — Travel Discovery & Route Intelligence',
+    body: "VoyageIQ plans trips around how you actually want to travel, not just where. Tell it your budget, duration, and preferences, and it generates personalized destination and itinerary suggestions, then layers in route intelligence — cost-efficient, fastest, or scenic — pulled against live weather and crowd data.\n\nThe frontend is Next.js/React/TypeScript talking to a FastAPI backend, with Groq API powering the natural-language itinerary generation.",
+    stack: ['Next.js', 'React', 'TypeScript', 'FastAPI', 'Groq API'],
+    links: [{ label: 'View Repository', href: 'https://github.com/animishgupta/VoyageIQ', primary: true }]
+  },
+  'cert-aws': {
+    tag: 'Certification · AWS · Jun 2026',
+    title: 'Foundations of Prompt Engineering',
+    body: 'Covers core prompt design techniques for working with large language models — zero-shot and few-shot prompting, chain-of-thought reasoning, and structuring prompts for more reliable, consistent model output. Issued by AWS Training & Certification.'
+  },
+  'cert-ibm-ai': {
+    tag: 'Certification · IBM SkillsBuild · Jun 2026',
+    title: 'AI Fundamentals: Foundations for Understanding AI',
+    body: 'An introduction to how AI systems work in practice — the role of data in AI and machine learning, common use cases, and the broader landscape of careers in the field. Issued by IBM SkillsBuild.'
+  },
+  'cert-hp': {
+    tag: 'Certification · HP LIFE · Jun 2026',
+    title: 'Data Science & Analytics',
+    body: 'Covers leading data science and analytics practices, methodologies, and tools — including the benefits and challenges of taking a data-driven approach in a business context. Issued by HP LIFE / HP Foundation.'
+  },
+  'cert-cisco': {
+    tag: 'Certification · Cisco Networking Academy · Jun 2026',
+    title: 'Introduction to Data Science',
+    body: "Covers the fundamentals of data analytics — the promises and challenges of working with data, the role data plays in AI and machine learning, and how to explore a career path in data analytics. Issued by Cisco Networking Academy."
+  },
+  'cert-deloitte': {
+    tag: 'Certification · Deloitte · Jun 2026',
+    title: 'Data Analytics Job Simulation',
+    body: 'A practical, task-based simulation covering real data analysis and forensic technology workflows, modeled on the kind of work Deloitte\u2019s analytics teams do day to day. Completed via Forage.'
+  },
+  'cert-tcs-market': {
+    tag: 'Certification · TCS iON · Apr 2026',
+    title: 'Understanding Market Risk in Financial Sector',
+    body: 'Covers how financial institutions identify, measure, and manage market risk — exposure to price, rate, and volatility movements across financial markets. Issued by TCS iON.'
+  },
+  'cert-tcs-wealth': {
+    tag: 'Certification · TCS iON · Apr 2026',
+    title: 'Basics of Wealth Management',
+    body: 'An introduction to wealth management fundamentals — financial planning, investment basics, and the core principles advisors use to manage client portfolios. Issued by TCS iON.'
+  },
+  'cert-excel': {
+    tag: 'Certification · Simplilearn · Mar 2026',
+    title: 'Introduction to MS Excel',
+    body: 'Covers core Excel skills for data work — formulas, functions, and spreadsheet organization used as the foundation for data analysis tasks.'
+  },
+  'cert-powerbi': {
+    tag: 'Certification · Simplilearn · Mar 2026',
+    title: 'Power BI for Beginners',
+    body: 'Covers the basics of building interactive dashboards and reports in Power BI — connecting data sources, building visuals, and presenting insights clearly.'
+  },
+  'cert-tableau': {
+    tag: 'Certification · Simplilearn · Mar 2026',
+    title: 'Introduction to Tableau',
+    body: 'Covers the fundamentals of data visualization in Tableau — building charts and dashboards to explore and communicate data visually.'
+  },
+  'cert-sql': {
+    tag: 'Certification · IBM Skills Network · Mar 2026',
+    title: 'SQL and Relational Databases 101',
+    body: 'Covers relational database fundamentals and SQL — writing queries, working with tables and relationships, and the core concepts behind structured data storage. Issued via Cognitive Class / IBM Developer Skills Network.'
+  },
+  'ach-devcation': {
+    tag: 'Achievement · Selected',
+    title: 'Devcation Delhi 2026',
+    body: 'Participated in Devcation Delhi 2026, organized by Google Developer Groups on Campus IGDTUW in partnership with IIT Delhi — a developer-focused event bringing together student developers for talks, workshops, and networking.'
+  },
+  'ach-hackbreak': {
+    tag: 'Achievement · Competed',
+    title: 'Hack & Break — IIT Bombay Cybersecurity Challenge',
+    body: "Competed in IIT Bombay's cybersecurity-focused hackathon, working on challenges around identifying and exploiting security vulnerabilities under time pressure."
+  },
+  'ach-codepunk': {
+    tag: 'Achievement · Built',
+    title: 'CodePunk V2.0 — GLA University',
+    body: 'Participated in CodePunk V2.0, a hackathon organized by GLA University held on 11th and 12th April 2026, and built SachAI, a deepfake forensics platform, during the event. See the SachAI project above for details on what was built.'
+  },
+  'ach-srijan': {
+    tag: 'Achievement · Sep 2024',
+    title: 'SRIJAN Cultural Fest — GLA University',
+    body: "Participated in SRIJAN, GLA University's annual cultural festival."
+  }
+};
+
+const modalOverlay = document.getElementById('modalOverlay');
+const modalCard = document.getElementById('modalCard');
+const modalTag = document.getElementById('modalTag');
+const modalTitle = document.getElementById('modalTitle');
+const modalBody = document.getElementById('modalBody');
+const modalStack = document.getElementById('modalStack');
+const modalActions = document.getElementById('modalActions');
+const modalClose = document.getElementById('modalClose');
+let lastFocusedEl = null;
+
+function openModal(key, pdfPath){
+  const data = DETAILS[key];
+  if(!data) return;
+  modalTag.textContent = data.tag || '';
+  modalTitle.textContent = data.title || '';
+  modalBody.textContent = data.body || '';
+
+  modalStack.innerHTML = '';
+  (data.stack || []).forEach(item => {
+    const span = document.createElement('span');
+    span.textContent = item;
+    modalStack.appendChild(span);
+  });
+
+  modalActions.innerHTML = '';
+  (data.links || []).forEach(link => {
+    const a = document.createElement('a');
+    a.href = link.href; a.target = '_blank'; a.rel = 'noopener';
+    a.className = link.primary ? 'primary' : 'ghost';
+    a.textContent = link.label + ' →';
+    modalActions.appendChild(a);
+  });
+  if(pdfPath){
+    const a = document.createElement('a');
+    a.href = pdfPath; a.download = '';
+    a.className = 'primary';
+    a.textContent = '↓ Download Certificate';
+    modalActions.appendChild(a);
+  }
+
+  lastFocusedEl = document.activeElement;
+  modalOverlay.classList.add('open');
+  modalOverlay.setAttribute('aria-hidden', 'false');
+  document.body.classList.add('modal-locked');
+  modalClose.focus();
+}
+
+function closeModal(){
+  modalOverlay.classList.remove('open');
+  modalOverlay.setAttribute('aria-hidden', 'true');
+  document.body.classList.remove('modal-locked');
+  if(lastFocusedEl && typeof lastFocusedEl.focus === 'function') lastFocusedEl.focus();
+}
+
+// Project cards: clicking anywhere except the repo link opens the modal.
+document.querySelectorAll('.proj-card[data-detail]').forEach(card => {
+  card.addEventListener('click', (e) => {
+    if(e.target.closest('a')) return; // let the repo link work normally
+    openModal(card.dataset.detail);
+  });
+  card.setAttribute('tabindex', '0');
+  card.setAttribute('role', 'button');
+  card.setAttribute('aria-haspopup', 'dialog');
+  card.addEventListener('keydown', (e) => {
+    if((e.key === 'Enter' || e.key === ' ') && !e.target.closest('a')){
+      e.preventDefault();
+      openModal(card.dataset.detail);
+    }
+  });
+});
+
+// Certification & achievement rows
+document.querySelectorAll('.list-row[data-detail]').forEach(row => {
+  row.addEventListener('click', () => openModal(row.dataset.detail, row.dataset.pdf));
+  row.addEventListener('keydown', (e) => {
+    if(e.key === 'Enter' || e.key === ' '){
+      e.preventDefault();
+      openModal(row.dataset.detail, row.dataset.pdf);
+    }
+  });
+});
+
+modalClose.addEventListener('click', closeModal);
+modalOverlay.addEventListener('click', (e) => {
+  if(e.target === modalOverlay) closeModal();
+});
+document.addEventListener('keydown', (e) => {
+  if(e.key === 'Escape' && modalOverlay.classList.contains('open')) closeModal();
+});
 </script>
 
 <script>
